@@ -2,7 +2,7 @@
 
 An automation that reads every new email in Gmail and turns it into a short, plain-text summary with action items and deadlines, using **n8n** and **Google Gemini**. It runs locally with **Docker**.
 
-![Workflow screenshot](workflow-screenshot.png)
+![Workflow screenshot](workflow-1.png)
 
 ---
 
