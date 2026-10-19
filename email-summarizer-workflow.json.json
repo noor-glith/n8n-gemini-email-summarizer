@@ -1,0 +1,132 @@
+{
+  "name": "AI Email Summarize",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [0, 0],
+      "id": "bd6de78b-3890-4024-8654-a189007fb26a",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9dKz4OyKYykGZUur",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Summarize the email below in 2–3 short bullet points. Use plain text only, no markdown or asterisks. Mention any action items or deadlines. Keep it under 60 words. No preamble.\n\nFrom: {{ $json.From }}\nSubject: {{ $json.Subject }}\nEmail: {{ $json.snippet }}",
+        "messages": {
+          "messageValues": []
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [224, 0],
+      "id": "3f4a8056-9049-4347-bc22-b88448a8845a",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [336, 304],
+      "id": "01bbcd65-99d3-42e2-a246-3121db91f0c2",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "9p8V4yfqantBWIlp",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "73b91a91-5264-4cd7-bbe9-7e4b85e07efa",
+              "name": "summary",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [592, 0],
+      "id": "290ee19d-3c95-44eb-8312-e561a5574b35",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "availableInMCP": false
+  },
+  "versionId": "e8d588b1-3e96-4449-93f7-d0a4d6014238",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2b190c1fd098c28f76e535a19d56e5793e9455594d839e8b2946383c24259bfd"
+  },
+  "nodeGroups": [],
+  "id": "ZDx3tdvqGQ9Inzzt",
+  "tags": []
+}
